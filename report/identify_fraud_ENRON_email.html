@@ -11776,8 +11776,8 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Project:-Identify-Fraud-from-ENRON-Email">Project: Identify Fraud from ENRON Email<a class="anchor-link" href="#Project:-Identify-Fraud-from-ENRON-Email">&#182;</a></h1><p>The ENRON case was one of the most important financial scandals in the history of EEUU. The corporation emerged in 1985 as a result of Houston Natural Gas and InterNorth fusion. After the legislation of energy deregulation laws, ENRON started to build a complex financial business model. This, together with unethical methods such as false accounting records to hide failed investments were the key to obtain revenues of nearly 101\$ billion during the year 2000. ENRON was the biggest company at that time employing more than 21000 people with investments all over 40 countries. In summer of 2000, the price per action reached the peak value around 90\$, one year and a half later the company declared bankruptcy.</p>
-<p>The goal of this project is to identify persons of interest (POI) among the employees of ENRON. We will consider POI as any individual who was responsible for any financial irregularity that led to the corporation's insolvency. To do so, we are provided with a dataset which contains financial and email-related data such as salary, long-term bonus, stock information and POI status. We will apply machine-learning techniques to train a predictive model able classify employees into POIs/non POIs.</p>
-<p>This report is organized as follows: in Section I we provide a description of the dataset and the procedures employed to identify and remove outliers. Feature selection and different machine learning algorithms are explained in Section II where we perform a comparison between different classifiers based on statistical metrics such as average score, recall or precision. Parameter tuning is performed over the best model found to improve its efficiency. Finally, we conclude and provide a list of references used during this work.</p>
+<p>The goal of this project is to identify persons of interest (POI) among the employees of ENRON. We will consider POI as any individual who was responsible for any financial irregularity that led to the corporation's insolvency. To do so, we are provided with a dataset which contains financial and email-related data such as salary, long-term bonus, stock information and POI status. We will apply machine-learning techniques to train a predictive model able classify employees into POIs or non POIs.</p>
+<p>This report is organized as follows: in Section I we provide a description of the dataset and the procedures employed to wrangle the data and to identify and remove outliers. Feature selection and different machine learning algorithms are explained in Section II where we perform a comparison between different classifiers based on statistical metrics such as average score, recall or precision. Parameter tuning is performed over the best model found to improve its efficiency. Finally, we conclude and provide a list of references used during this work.</p>
 
 </div>
 </div>
@@ -11795,8 +11795,8 @@ div#notebook {
 <li><p>The data of 'LOCKHART EUGENE E' is empty. This point will be automatically removed by the <code>featureFormat</code> method when transforming the raw data into a matrix.</p>
 </li>
 </ul>
-<p>The dataset contains 144 valid entries with 19 features related to financial (such as salary, bonus, total stock value, etc...) and email information (messages to POIs, messages from POIs). POI is the field used to binary-classify the employees. This dataset is strongly unbalanced towards the non-POI class since only 19 out of 144 employees are POIs. This aspect will be important during the data cleaning process and model validation.</p>
-<p>Completeness of the data is usually a problem while working with real-world data. The bar plot shown in Fig. 1 depicts the number of NaNs per feature. Fields like 'poi',  'restricted stock value' or 'total payments' are the ones with least amount of empty data in contrast with 'loan advances', 'director fees' or 'restricted stock deferred'. The presence of NaN values has a direct effect on the quality of a given feature and will influence which features are relevant to choose during the algorithm training.</p>
+<p>The dataset contains 144 valid entries with 19 features related to financial (such as salary, bonus, total stock value, etc...) and email information (messages to POIs, messages from POIs). POI is the field used to binary-classify the employees. This dataset is strongly unbalanced towards the non-POI class since only 18 out of 144 employees are POIs. The POI/non-POI ratio will be important during the data cleaning process and model validation since reflects the class imbalance of the data.</p>
+<p>Completeness is usually a problem while working with real-world data. The bar plot shown in Fig. 1 depicts the number of NaNs per feature. Fields like 'poi',  'restricted stock value' or 'total payments' are the ones with least amount of empty data in contrast with 'loan advances', 'director fees' or 'restricted stock deferred'. The presence of NaN values has a direct effect on the quality of a given feature and will influence which features are relevant during the algorithm training.</p>
 <p><strong>Figure 1</strong> <img src="./figures/features_nans.pdf" alt="EDA_plot"></p>
 
 </div>
@@ -11806,7 +11806,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Outliers">Outliers<a class="anchor-link" href="#Outliers">&#182;</a></h4><p>Outliers identification is essential to distinguish data points that deviate from the general trend an may affect negatively the outcome of the study. A first approach can be done just by exploring the relationship between different features. Fig. 2 shows the dependence between bonus, salary, exercised_stock_options and total_stock_value with and without outliers.</p>
+<h4 id="Outliers">Outliers<a class="anchor-link" href="#Outliers">&#182;</a></h4><p>Outliers identification is essential to distinguish the data points that deviate from the general trend an may affect negatively the outcome of the study. A first approach can be done just by exploring the relationship between different features. Fig. 2 shows the dependence between bonus, salary, exercised_stock_options and total_stock_value with and without outliers. As we will see in Sec. II, these fields are going to be crucial while identifying POIS.</p>
 <p><strong>Figure 2</strong> <img src="./figures/plot_EDA.pdf" alt="EDA_plot"></p>
 <p>There is one clear outlier in the left panels which corresponds to the 'TOTAL' point. After the outlier is removed we see that the plot dimensions are reduced to ranges that agree with the employee's data. The outlier removal can be increased upon consideration of a linear dependence between the plotted features. In Fig. 3 we show that, after removing the biggest deviated data (10%), the $R^2$ coefficient increases as expected. However, this is not a good approach while working with strongly imbalanced data. Taking a closer look to the outliers (blue points in Fig. 3) one can detect that some of them are POIs like Kenneth Lay. Removing these points would not improve the quality of the model. The outliers and POI status detected in Fig. 3 are displayed in Table 1.</p>
 <p><strong>Figure 3</strong> <img src="./figures/outlier_removal_regression.pdf" alt="EDA_plot"></p>
@@ -11927,8 +11927,13 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Classification-algorithm">Classification algorithm<a class="anchor-link" href="#Classification-algorithm">&#182;</a></h4><p>During this project, we have evaluated the performance of different classifiers: Naive Bayes, Decision Tree, Random Forest and Ada Boost. Code 1 block shows an example of the classification's code using the Naive Bayes model. The steps taken during the classification are the same for all the classifiers tested. First, the dataset to the 10 best features as found in the previous subsection (Table 3 right). After that, we build and generalize the model using <em>k</em>-fold cross-validation (CV) implemented with <code>perform_classification</code> method defined in <code>./modules/ML_methods.py</code>.</p>
-<p>This method is especially useful to treat class-disproportionated data. Instead of performing a train-test split once, the <em>k</em>-fold CV divides the data into <em>k</em> sets called folds. The classification is built using <em>k-1</em> folds and evaluated with the remaining one. This process is repeated k times for all the folds. The effectiveness of the model is computed from the mean value of different statistical metrics obtained for all the folds. CV is broadly used to improve the model generalization. In the following table, we display the accuracy score (ratio between the predicted and real test values) for different classificators.</p>
+<h4 id="Classification-algorithm">Classification algorithm<a class="anchor-link" href="#Classification-algorithm">&#182;</a></h4><p>During this project, we have evaluated the performance of different classifiers: Naive Bayes, Decision Tree, Random Forest and Ada Boost. Code 1 block shows an example of the classification's code using the Naive Bayes model. The steps taken during the classification are the same for all the classifiers tested.</p>
+<p>Before discussing the details of the code we should consider the need (or not) to perform feature scaling. This technique is employed to make comparisons between features defined within different range intervals. Some algorithms like KNN make predictions measuring distances (usually cartesian or minkowsky distances) between points. This magnitude is highly sensitive to the data domain. Depending on the classifier feature scaling can be relevant and, therefore, may affect the outcome. To avoid this, we can renormalize the data to take values within the same range interval. The most important Feature Scaling procedures are Standardisation, Min-Max Scaling and Unit Vector. The Standardization replaces the data points according to the Z score and redistributes the data like a Gaussian with $\mu = 0$ and $\sigma = 1$. Min-Max Scaling redistributes the data as follows:</p>
+<p>$$ \bar{x} = \frac{x - x_{min}}{x_{max} - x_{min}} $$</p>
+<p>and reduces the range interval to $[0,1]$, where the minimum and maximum value take respectively 0 and 1. Unit Vector is the regular vector normalization and it also redefines the data domain from 0 to 1. Since we are going to perform the data analysis with classifiers like Naive Bayes or Decision Trees that are not sensitive to data distances or inter-feature's domain ranges, we do not need to include the scaling into the algorithm.</p>
+<p>All the models were built by performing feature selection (as shown in the previous subsection Table 3 right) and using cross-validation (this was implemented with the <code>perform_classification</code> method defined in <code>./modules/ML_methods.py</code>). Cross-validation (CV) is especially useful while working with class-disproportionated data since it typically validates systematically the model into subsets of the data and gives a better idea of how the algorithm generalizes. We have used StratifiedShuffleSplit to split and validate the classifier. This method ultimately splits the data into <em>k</em>-folds. Each time that a new fold is created the data is shuffled. Also, the fold is randomized again and split into train-test sets. The test sets are used to validate each <em>k</em>-level. This procedure is repeated <em>k</em>-1 times. The following picture illustrates the StratifiedShuffleSplit technique for k = 4 divisions.</p>
+<p><strong>Figure 4</strong> <img src="./figures/CV_SSS.png" alt="drawing" width="500"/></p>
+<p>The efficiency of the algorithm is tested on all the folds. As a result, the mean value of different metrics is provided as a global measure. CV is, in general, a more reliable approach to study the model's generalization than a simple train-test split. In the following table, we display the accuracy score (ratio between the predicted and real test values) for different classificators.</p>
 <p><strong>Table 4</strong></p>
 <table>
 <thead><tr>
@@ -11978,7 +11983,8 @@ div#notebook {
 <li>F1 $ \equiv 2 \cdot (P \cdot R) / (P + R)$</li>
 </ul>
 <p>where TP, TN, FP and FN are true positive, true negative, false positive and false negative classified values.</p>
-<p>In the case of unbalanced data, the accuracy score is not a good metric to evaluate the goodness of the model. Since the majority of the ENRON employees are non-POIs, a model that ignores the POI data would correctly classify the ordinary workers and produce a good accuracy score. One would better consider other metrics such as recall, precision or F1. The recall reflects the amount of correctly classified POIs, or in other words, the model’s ability to find all the data points of interest in a dataset. The precision, on the other hand, shows how relevant is the POI classified data. By increasing the recall the precision decreases and vice-versa. The tradeoff between these variables can be measured with the F1 score.</p>
+<p>In the case of unbalanced data, the accuracy score is not a good metric to evaluate the goodness of the model. Since the majority of the ENRON employees are non-POIs, a model that ignores the POI data would correctly classify the ordinary workers and produce a good accuracy score. One would better consider other metrics such as recall, precision or F1. The recall reflects the amount of correctly classified POIs, or in other words, the model’s ability to find all the data points of interest in a dataset.</p>
+<p>However, the recall alone is not a good metric to evaluate the goodness of the model. One can notice that by increasing the number of people predicted as POIs the recall increases but the precision is reduced. The precision is defined as the ratio between the true positives and the sum of true positives and false positives which, in this context, corresponds to the number of correctly predicted POIs between the number of correctly and incorrectly identified POIs. The precision is a metric which reflects the ability of the algorithm to identify reliable information within the predicted POIs. One can observe also that there is a relation between these two metrics: while the recall increases the precision decreases and vice-versa. The tradeoff between these variables can be measured with the F1 score.</p>
 <p>From the values shown in the table above, we see that the Naive Bayes classifier has the best recall, precision and F1 scores. Therefore, among the tested models, the Naive Bayes classifier is the one which presents the best performance of all.</p>
 
 </div>
@@ -12025,6 +12031,8 @@ div#notebook {
 <span class="c1"># Algorithm steps: 1) Feature selection, 2) Model construction</span>
 <span class="n">steps_NB</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;feature_selection&#39;</span><span class="p">,</span> <span class="n">feature_selection</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Naive_Bayes&#39;</span><span class="p">,</span> <span class="n">clf_NB</span><span class="p">)]</span>
 <span class="n">pipe_NB</span><span class="p">,</span> <span class="n">results_NB</span> <span class="o">=</span> <span class="n">perform_classification</span><span class="p">(</span><span class="n">clf_NB</span><span class="p">,</span> <span class="n">steps_NB</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+
+<span class="c1"># Similar code for the rest of the classifiers</span>
 </pre></div>
 
 </div>
@@ -12034,7 +12042,11 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Parameter-tuning">Parameter tuning<a class="anchor-link" href="#Parameter-tuning">&#182;</a></h4><p>We have performed parameter tuning on the Naive Bayes algorithm to find the set of parameters that improve the POI identification. In this case, we can only tune the number of features selected during the fit. As shown in the Code 2 block, this process is implemented with the <code>GridSearchCV</code> method. The best score parameters were found for the Naive Bayes classifier considering 12 features. The following table we show the score metrics before and after the parameter tuning.</p>
+<h4 id="Parameter-tuning">Parameter tuning<a class="anchor-link" href="#Parameter-tuning">&#182;</a></h4><p>In the previous subsection, we have found that the Naive Bayes algorithm produced the best quality classification. However, this result was obtained by comparing the results of different classifiers with the default parameter settings. Each machine-learning algorithm has a different set of variables that control several aspects of the model's complexity. In order to obtain the optimal configuration, we must to explore different configuration of parameters for different classifiers.</p>
+<p>Building the model with the correct complexity is the key to obtain good fitting both during training and testing steps. A too simple algorithm (bias) will ignore the data and produce inaccurate results both for predictions over the train and test sets. While a too detailed one (variance) will describe accurately the particularities of the training data but will not produce a good generalization. In Machine learning, we usually refer to these limit cases as underfitted or overfitted models. It is clear the importance of avoiding these scenarios and one way to do this is precisely to tune the parameters until found the ones which provides the optimal model complexity.</p>
+<p>We have tested a wide range of parameters for the Naive Bayes, Decision Tree, Random Forest and Ada Boost classifiers.</p>
+<p>The Code block 2 contains the steps followed to perform during the Decision Tree case. For this classifier, we explored two parameters: the 'criterion' and 'min_samples_split'. We tested two criterion methods 'gini' and 'entropy'. 'min_samples_split' stands for the minimum number of samples required to split an internal node and was tested from 2 to 10. The smaller this quantity is the more complex the classifier will be. The 'splitter' parameter was left as 'best' to ensure that the code chooses the best split on each node.</p>
+<p>We have observed that the parameter tuning of the Naive Bayes algorithm still has the best generalization. In this case, we can only tune the number of features selected during the fit. As shown in the Code 3 block, this process is implemented with the <code>GridSearchCV</code> method. The best score parameters were found for the Naive Bayes classifier considering 12 features. The following table we show the score metrics before and after the parameter tuning.</p>
 <p><strong>Table 5</strong></p>
 <table>
 <thead><tr>
@@ -12078,15 +12090,43 @@ div#notebook {
 <span class="sd">    range of parameters.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
+    <span class="c1"># Pipeline following the steps of the classification</span>
     <span class="n">pipe</span>    <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+    <span class="c1"># CV method</span>
     <span class="n">cv_kfold</span> <span class="o">=</span> <span class="n">StratifiedShuffleSplit</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">folds</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span>
+    <span class="c1"># Scanning of the parameters defimed in clf_parameters</span>
     <span class="n">cv_grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">param_grid</span> <span class="o">=</span> <span class="n">clf_parameters</span><span class="p">,</span> <span class="n">cv</span> <span class="o">=</span> <span class="n">cv_kfold</span><span class="p">)</span>
     <span class="n">cv_grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">cv_grid</span>
 
+<span class="n">clf_DT</span>   <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
+<span class="n">feature_selection</span> <span class="o">=</span> <span class="n">SelectKBest</span><span class="p">()</span>
 
-<span class="k">print</span> <span class="s2">&quot;Performing Grid Search of Naive Bayes classification&quot;</span>
+<span class="c1"># Steps: 1) Feature selection, 2) Clasification </span>
+<span class="n">steps_DT</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;feature_selection&#39;</span><span class="p">,</span> <span class="n">feature_selection</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Decission_Tree&#39;</span><span class="p">,</span> <span class="n">clf_DT</span><span class="p">)]</span>
+<span class="k">print</span> <span class="s2">&quot;Performing Grid Search of Decission Tree classification&quot;</span>
+<span class="n">param_dict_DT</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;feature_selection__k&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">features_list</span><span class="p">)),</span>\
+                 <span class="s1">&#39;Decission_Tree__criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">],</span>\
+                 <span class="s1">&#39;Decission_Tree__min_samples_split&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}</span>
+
+<span class="n">gs</span> <span class="o">=</span> <span class="n">grid_search</span><span class="p">(</span><span class="n">steps_DT</span><span class="p">,</span> <span class="n">param_dict_DT</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+<span class="c1"># Model with the best parameter configuration</span>
+<span class="n">gs_clf_DT</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">best_estimator_</span>
+<span class="k">print</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> Score Metrics Decission Tree Classifier&#39;</span>
+<span class="n">test_classifier</span><span class="p">(</span><span class="n">gs_clf_DT</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">,</span> <span class="n">features_list</span><span class="p">,</span> <span class="n">folds</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="k">print</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Code 3: Parameter tuning method for the Naive Bayes classifier</strong></p>
+<div class="highlight"><pre><span></span><span class="k">print</span> <span class="s2">&quot;Performing Grid Search of Naive Bayes classification&quot;</span>
 <span class="c1"># Range of parameters of the classification tuning</span>
 <span class="n">param_dict_NB</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;feature_selection__k&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">features_list</span><span class="p">))}</span>
 <span class="n">gs</span> <span class="o">=</span> <span class="n">grid_search</span><span class="p">(</span><span class="n">steps_NB</span><span class="p">,</span> <span class="n">param_dict_NB</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
@@ -12115,10 +12155,12 @@ div#notebook {
 <h3 id="Bibliography">Bibliography<a class="anchor-link" href="#Bibliography">&#182;</a></h3><ul>
 <li><a href="https://books.google.at/books/about/Introduction_to_Machine_Learning_with_Py.html?id=qjUVogEACAAJ&amp;redir_esc=y">https://books.google.at/books/about/Introduction_to_Machine_Learning_with_Py.html?id=qjUVogEACAAJ&amp;redir_esc=y</a></li>
 <li><a href="http://scikit-learn.org/stable/modules/outlier_detection.html">http://scikit-learn.org/stable/modules/outlier_detection.html</a></li>
+<li><a href="http://scikit-learn.org/stable/modules/preprocessing.html">http://scikit-learn.org/stable/modules/preprocessing.html</a></li>
 <li><a href="https://towardsdatascience.com/understanding-the-bias-variance-tradeoff-165e6942b229">https://towardsdatascience.com/understanding-the-bias-variance-tradeoff-165e6942b229</a></li>
 <li><a href="https://towardsdatascience.com/train-test-split-and-cross-validation-in-python-80b61beca4b6">https://towardsdatascience.com/train-test-split-and-cross-validation-in-python-80b61beca4b6</a></li>
 <li><a href="https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/">https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/</a></li>
 <li><a href="http://scikit-learn.org/stable/modules/cross_validation.html">http://scikit-learn.org/stable/modules/cross_validation.html</a></li>
+<li><a href="https://stackoverflow.com/questions/45969390/difference-between-stratifiedkfold-and-stratifiedshufflesplit-in-sklearn">https://stackoverflow.com/questions/45969390/difference-between-stratifiedkfold-and-stratifiedshufflesplit-in-sklearn</a></li>
 </ul>
 
 </div>
