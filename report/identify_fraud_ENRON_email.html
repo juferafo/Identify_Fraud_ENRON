@@ -11797,7 +11797,7 @@ div#notebook {
 </ul>
 <p>The dataset contains 144 valid entries with 19 features related to financial (such as salary, bonus, total stock value, etc...) and email information (messages to POIs, messages from POIs). POI is the field used to binary-classify the employees. This dataset is strongly unbalanced towards the non-POI class since only 18 out of 144 employees are POIs. The POI/non-POI ratio will be important during the data cleaning process and model validation since reflects the class imbalance of the data.</p>
 <p>Completeness is usually a problem while working with real-world data. The bar plot shown in Fig. 1 depicts the number of NaNs per feature. Fields like 'poi',  'restricted stock value' or 'total payments' are the ones with least amount of empty data in contrast with 'loan advances', 'director fees' or 'restricted stock deferred'. The presence of NaN values has a direct effect on the quality of a given feature and will influence which features are relevant during the algorithm training.</p>
-<p><strong>Figure 1</strong> <img src="./figures/features_nans.pdf" alt="EDA_plot"></p>
+<p><strong>Figure 1</strong> <img src="./figures/features_nans.png" alt="drawing" width="600"/></p>
 
 </div>
 </div>
@@ -11807,9 +11807,9 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h4 id="Outliers">Outliers<a class="anchor-link" href="#Outliers">&#182;</a></h4><p>Outliers identification is essential to distinguish the data points that deviate from the general trend an may affect negatively the outcome of the study. A first approach can be done just by exploring the relationship between different features. Fig. 2 shows the dependence between bonus, salary, exercised_stock_options and total_stock_value with and without outliers. As we will see in Sec. II, these fields are going to be crucial while identifying POIS.</p>
-<p><strong>Figure 2</strong> <img src="./figures/plot_EDA.pdf" alt="EDA_plot"></p>
+<p><strong>Figure 2</strong> <img src="./figures/plot_EDA.png" alt="drawing" width="600"/></p>
 <p>There is one clear outlier in the left panels which corresponds to the 'TOTAL' point. After the outlier is removed we see that the plot dimensions are reduced to ranges that agree with the employee's data. The outlier removal can be increased upon consideration of a linear dependence between the plotted features. In Fig. 3 we show that, after removing the biggest deviated data (10%), the $R^2$ coefficient increases as expected. However, this is not a good approach while working with strongly imbalanced data. Taking a closer look to the outliers (blue points in Fig. 3) one can detect that some of them are POIs like Kenneth Lay. Removing these points would not improve the quality of the model. The outliers and POI status detected in Fig. 3 are displayed in Table 1.</p>
-<p><strong>Figure 3</strong> <img src="./figures/outlier_removal_regression.pdf" alt="EDA_plot"></p>
+<p><strong>Figure 3</strong> <img src="./figures/outlier_removal_regression.png" alt="drawing" width="600"/></p>
 <p><strong>Table 1</strong></p>
 <table>
 <thead><tr>
