@@ -10,8 +10,15 @@ We also test and discuss the classification efficiency of different algorithms s
 
 ### Contents
 
-This work was developed with `Python` using the library `scikit-learn`. 
+This work was developed with `Python` using the Machine Learning library `scikit-learn`. 
 The main script `./poi_id.py` imports the user-defined libraries in `./modules/`
 to process and classify the data. 
 
 The project report can be found in `./report/identify_fraud_ENRON_email.html` or `./report/identify_fraud_ENRON_email.ipynb`.
+
+### Software and libraries
+
+* [Python2.7](https://www.python.org/download/releases/2.7/)
+* [NumPy](https://www.numpy.org/)
+* [Matplotlib](https://matplotlib.org/)
+* [scikit-learn](https://scikit-learn.org/stable/)
